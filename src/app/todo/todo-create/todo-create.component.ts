@@ -1,5 +1,7 @@
-import { Component, EventEmitter, Output } from '@angular/core';
+import { Component, EventEmitter, inject, Output } from '@angular/core';
 import { TodoService } from '../services/todo.service';
+import { Router } from '@angular/router';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 
 @Component({
   selector: 'app-todo-create',
@@ -7,11 +9,19 @@ import { TodoService } from '../services/todo.service';
   styleUrls: ['./todo-create.component.css'],
 })
 export class TodoCreateComponent {
-  @Output('newTodo') newTodo = new EventEmitter<string>();
+  todoService = inject(TodoService);
+  router = inject(Router);
 
-  todo: string = '';
+  todoForm: FormGroup;
 
-  submit() {
-    this.newTodo.emit(this.todo);
+  constructor(private formBuilder: FormBuilder) {
+    this.todoForm = this.formBuilder.group({
+      title: ['', Validators.required],
+    });
+  }
+
+  addTodo() {
+    this.todoService.addTodo(this.todoForm.value.title)
+    this.router.navigate(["/todo"])
   }
 }

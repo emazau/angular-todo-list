@@ -1,10 +1,16 @@
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { Todo } from '../models/todo';
+import { HttpClient } from '@angular/common/http';
+import { Observable, firstValueFrom } from 'rxjs';
+import { environment } from 'environments/environment';
+
 
 @Injectable({
   providedIn: 'root',
 })
 export class TodoService {
+  http = inject(HttpClient);
+
   private todoId = 1;
   private todoList: Todo[] = [
     {
@@ -24,29 +30,18 @@ export class TodoService {
     },
   ];
 
-  // TODO replace with a get request
-  todos: Promise<Todo[]> = Promise.resolve(this.todoList);
 
-  async addTodo(title: string): Promise<Todo> {
-    // TODO: replace with a POST request
-    const todo = {
-      id: this.todoId++,
-      title: title,
-      completed: false,
-    };
-    this.todoList.push(todo);
 
-    return todo;
+  getTodo(): Observable<Todo[]> {
+    return this.http.get<Todo[]>(`${environment.apiUrl}/todo`);
   }
 
-  async updateTodo(updatedTodo: Todo): Promise<Todo> {
-    // TODO: replace with a PUT request
-    const foundTodo = this.todoList.find((todo) => todo.id === updatedTodo.id);
-    if (!foundTodo) {
-      throw new Error('todo not found');
-    }
-    Object.assign(foundTodo, updatedTodo);
-
-    return foundTodo;
-  }
+  addTodo(title: string) {
+  // @ts-ignore
+    firstValueFrom(
+    this.http.post(`${environment.apiUrl}/todo`, {
+    title: title,
+    })
+  );
+}
 }
