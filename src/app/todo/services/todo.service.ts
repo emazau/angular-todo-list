@@ -11,26 +11,6 @@ import { environment } from 'environments/environment';
 export class TodoService {
   http = inject(HttpClient);
 
-  private todoId = 1;
-  private todoList: Todo[] = [
-    {
-      id: this.todoId++,
-      title: 'serve the app',
-      completed: true,
-    },
-    {
-      id: this.todoId++,
-      title: 'familiarise yourself with the codebase',
-      completed: false,
-    },
-    {
-      id: this.todoId++,
-      title: 'start talking to the api',
-      completed: false,
-    },
-  ];
-
-
 
   getTodo(): Observable<Todo[]> {
     return this.http.get<Todo[]>(`${environment.apiUrl}/todo`);
@@ -44,4 +24,28 @@ export class TodoService {
     })
   );
 }
+
+
+  changeTodo(url: string, header: Object):void {
+  this.http.put(url, header).subscribe(
+      (response) => {
+        console.log('Item updated successfully:', response);
+        // Handle success (e.g., show a success message)
+
+
+
+      },
+      (error) => {
+        console.error('Error updating item:', error);
+
+        // Handle error (e.g., revert checkbox state, show error message)
+        // You might want to revert item.isActive if the update fails
+      }
+    );
+  }
+
+  deleteItem(id: number){
+    return this.http.delete(`${environment.apiUrl}/todo/${id}`);
+  }
 }
+

@@ -2,8 +2,10 @@
 @for (item of this.todos$ | async; track item) {
 
   <span> {{item.id}} {{item.title}} is {{item.completed}}</span> 
-    <input type="checkbox" [(ngModel)]="item.completed" (change)="updateItemStatus(item.title, item.completed, item.id)">
-
+    <input id="change" type="checkbox"  [(ngModel)]="item.completed" (change)="updateItemStatus(item.title, item.completed, item.id)">
+    <label for="change">change</label>
+    <input id="delete" type="checkbox"  (change)="deleteItem(item.id)">
+    <label for="delete">Delete</label>
 
 }
 

@@ -14,7 +14,7 @@ import { environment } from 'environments/environment';
 export class TodoListComponent {
   item: Todo = { id: 0, title: 'Example Item', completed: true }; // Example item
 
-  constructor(private readonly todoService: TodoService, public http: HttpClient) {}
+  constructor(private readonly todoService: TodoService) {}
 
   todos$ = new Observable<Todo[]>();
 
@@ -24,30 +24,23 @@ export class TodoListComponent {
   }
 
   updateItemStatus(title: string, comp: boolean, id: number): void {
-    const url = `${environment.apiUrl}/todo/${id}`; // Construct the URL
-    const updatedData = { 
-      title: title,
-      completed: comp }; // Data to send in the PUT request
-      console.log(updatedData)
-    this.http.put(url, {
+    const url = `${environment.apiUrl}/todo/${id}`; // Construct the URL    
+      this.todoService.changeTodo(url, {
   title: title,
-  completed: comp,
-}).subscribe(
-      (response) => {
-        console.log('Item updated successfully:', response);
-        // Handle success (e.g., show a success message)
+  completed: comp,})
 
+  }
 
-
+  deleteItem(id:number){
+    this.todoService.deleteItem(id).subscribe({
+      next: () => {
+        console.log("item delted successfully");
       },
-      (error) => {
-        console.error('Error updating item:', error);
-
-        // Handle error (e.g., revert checkbox state, show error message)
-        // You might want to revert item.isActive if the update fails
-        comp = !comp;
+      error: (error) =>{
+        console.error("eeroror deleteding item: ", error)
       }
-    );
+
+    })
   }
   
 
